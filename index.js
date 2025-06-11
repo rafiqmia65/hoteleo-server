@@ -26,7 +26,24 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-   
+
+
+    const roomsCollection = client.db("hoteleo").collection("rooms");
+
+    app.post("/rooms", async (req, res) => {
+      const data = req.body;
+      const result = await roomsCollection.insertOne(data);
+      res.send(result);
+    });
+
+    app.get("/rooms", async (req, res) => {
+      const result = await roomsCollection.find().toArray();
+      res.send(result);
+    });
+
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -35,7 +52,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
