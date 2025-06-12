@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config()
+require("dotenv").config();
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 3000;
@@ -26,8 +26,6 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-
-
     const roomsCollection = client.db("hoteleo").collection("rooms");
 
     app.post("/rooms", async (req, res) => {
@@ -37,7 +35,20 @@ async function run() {
     });
 
     app.get("/rooms", async (req, res) => {
-      const result = await roomsCollection.find().toArray();
+      const { budget } = req.query;
+      let filter = {};
+
+      if (budget === "All") {
+        filter = {};
+      } else if (budget === "0-1000") {
+        filter.price = { $lte: 1000 };
+      } else if (budget === "1001-1500") {
+        filter.price = { $gt: 1000, $lte: 1500 };
+      } else if (budget === "1501+") {
+        filter.price = { $gt: 1500 };
+      }
+
+      const result = await roomsCollection.find(filter).toArray();
       res.send(result);
     });
 
@@ -47,10 +58,6 @@ async function run() {
       const result = await roomsCollection.findOne(query);
       res.send(result);
     });
-
-
-
-
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -63,7 +70,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
 
 app.get("/", (req, res) => {
   res.send("Hoteleo Server is Cooking!");
