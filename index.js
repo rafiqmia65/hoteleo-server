@@ -59,6 +59,23 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/book-room/:id", async (req, res) => {
+      const roomId = req.params.id;
+      const { name, email, date } = req.body;
+
+      const bookingEntry = { roomId, name, email, date };
+
+      const result = await roomsCollection.updateOne(
+        { _id: new ObjectId(roomId) },
+        {
+          $set: { availability: false },
+          $push: { bookedDates: bookingEntry },
+        }
+      );
+
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
