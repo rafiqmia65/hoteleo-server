@@ -99,6 +99,23 @@ async function run() {
       res.send(userBookings);
     });
 
+    app.patch("/review/:roomId", async (req, res) => {
+      const roomId = req.params.roomId;
+      const { review } = req.body;
+
+      const filter = { _id: new ObjectId(roomId) };
+      const update = {
+        $push: {
+          reviews: review,
+        },
+      };
+
+      const result = await roomsCollection.updateOne(filter, update);
+      res.send(result);
+    });
+
+    
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
