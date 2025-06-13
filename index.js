@@ -76,6 +76,29 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/my-bookings", async (req, res) => {
+      const { email } = req.query;
+
+      const rooms = await roomsCollection.find({}).toArray();
+
+      const userBookings = [];
+
+      rooms.forEach((room) => {
+        room.bookedDates?.forEach((booking) => {
+          if (booking.email === email) {
+            userBookings.push({
+              roomId: room._id,
+              title: room.title,
+              image: room.image,
+              date: booking.date,
+            });
+          }
+        });
+      });
+
+      res.send(userBookings);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
