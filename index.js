@@ -63,7 +63,7 @@ async function run() {
       const roomId = req.params.id;
       const { name, email, date } = req.body;
 
-      const bookingEntry = { roomId, name, email, date };
+      const bookingEntry = { _id: new ObjectId(), roomId, name, email, date };
 
       const result = await roomsCollection.updateOne(
         { _id: new ObjectId(roomId) },
@@ -87,6 +87,7 @@ async function run() {
         room.bookedDates?.forEach((booking) => {
           if (booking.email === email) {
             userBookings.push({
+              bookingId: booking._id,
               roomId: room._id,
               title: room.title,
               image: room.image,
@@ -114,7 +115,30 @@ async function run() {
       res.send(result);
     });
 
-    
+    app.patch("/booking-date-update", async (req, res) => {
+      const { roomId, bookingId, newDate } = req.body;
+
+      const filter = {
+        _id: new ObjectId(roomId),
+        "bookedDates._id": new ObjectId(bookingId),
+      };
+
+      const update = {
+        $set: {
+          "bookedDates.$.date": newDate,
+        },
+      };
+
+      const result = await roomsCollection.updateOne(filter, update);
+
+      res.send({
+        success: result.modifiedCount > 0,
+        message:
+          result.modifiedCount > 0
+            ? "Booking date updated successfully"
+            : "Booking not found or already updated",
+      });
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
