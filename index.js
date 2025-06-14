@@ -140,6 +140,33 @@ async function run() {
       });
     });
 
+    app.delete("/booking-cancel", async (req, res) => {
+      const { bookingId, roomId } = req.body;
+
+      const filter = {
+        _id: new ObjectId(roomId),
+      };
+
+      const updateDoc = {
+        $pull: {
+          bookedDates: {
+            _id: new ObjectId(bookingId),
+          },
+        },
+        $set: { availability: true },
+      };
+
+      const result = await roomsCollection.updateOne(filter, updateDoc);
+
+      res.send({
+        success: result.modifiedCount > 0,
+        message:
+          result.modifiedCount > 0
+            ? "Booking cancelled successfully"
+            : "Booking not found or already cancelled",
+      });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
