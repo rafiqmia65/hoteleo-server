@@ -52,6 +52,54 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/top-rated-room", async (req, res) => {
+      const topRooms = await roomsCollection
+        .aggregate([
+          {
+            $addFields: {
+              avgRating: {
+                $cond: [
+                  { $gt: [{ $size: "$reviews" }, 0] },
+                  { $avg: "$reviews.rating" },
+                  0,
+                ],
+              },
+              totalReviews: { $size: "$reviews" },
+            },
+          },
+          {
+            $sort: {
+              avgRating: -1,
+              totalReviews: -1,
+            },
+          },
+          { $limit: 6 },
+          {
+            $project: {
+              title: 1,
+              image: 1,
+              price: 1,
+              description: 1,
+              features: 1,
+              location: 1,
+              bedType: 1,
+              size: 1,
+              maxGuests: 1,
+              amenities: 1,
+              tags: 1,
+              availability: 1,
+              bookedDates: 1,
+              reviews: 1,
+              avgRating: 1,
+              totalReviews: 1,
+            },
+          },
+        ])
+        .toArray();
+
+      res.send(topRooms);
+    });
+
     app.get("/rooms/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -100,19 +148,53 @@ async function run() {
       res.send(userBookings);
     });
 
+    app.get("/latest-reviews", async (req, res) => {
+      const rooms = await roomsCollection.find().toArray();
+      const allReviews = rooms
+        .flatMap(
+          (room) =>
+            room.reviews?.map((review) => ({
+              ...review,
+              roomTitle: room.title,
+              roomId: room._id,
+              roomImage: room.image,
+              date: new Date(review.date),
+            })) || []
+        )
+        .sort((a, b) => b.date - a.date)
+
+        .slice(0, 10);
+
+      res.send(allReviews);
+    });
+
     app.patch("/review/:roomId", async (req, res) => {
-      const roomId = req.params.roomId;
+      const { roomId } = req.params;
       const { review } = req.body;
 
-      const filter = { _id: new ObjectId(roomId) };
-      const update = {
-        $push: {
-          reviews: review,
-        },
-      };
+      if (!review || !review.name || !review.rating || !review.comment) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid review data",
+        });
+      }
 
-      const result = await roomsCollection.updateOne(filter, update);
-      res.send(result);
+      const result = await roomsCollection.updateOne(
+        { _id: new ObjectId(roomId) },
+        { $push: { reviews: review } }
+      );
+
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Room not found or no changes made",
+        });
+      }
+
+      res.json({
+        success: true,
+        modifiedCount: result.modifiedCount,
+      });
     });
 
     app.patch("/booking-date-update", async (req, res) => {
