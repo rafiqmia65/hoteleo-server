@@ -76,7 +76,7 @@ async function run() {
       const { budget } = req.query;
       let filter = {};
 
-      if (budget === "All") {
+      if (!budget || budget === "All") {
         filter = {};
       } else if (budget === "0-1000") {
         filter.price = { $lte: 1000 };
