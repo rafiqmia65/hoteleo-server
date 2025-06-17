@@ -223,7 +223,7 @@ async function run() {
 
     // Review Added
 
-    app.patch("/review/:roomId", async (req, res) => {
+    app.patch("/review/:roomId", verifyFireBaseToken, async (req, res) => {
       const { roomId } = req.params;
       const { review } = req.body;
 
@@ -254,59 +254,69 @@ async function run() {
 
     // Booking Date Update
 
-    app.patch("/booking-date-update", async (req, res) => {
-      const { roomId, bookingId, newDate } = req.body;
+    app.patch(
+      "/booking-date-update",
+      verifyFireBaseToken,
+      verifyTokenEmail,
+      async (req, res) => {
+        const { roomId, bookingId, newDate } = req.body;
 
-      const filter = {
-        _id: new ObjectId(roomId),
-        "bookedDates._id": new ObjectId(bookingId),
-      };
+        const filter = {
+          _id: new ObjectId(roomId),
+          "bookedDates._id": new ObjectId(bookingId),
+        };
 
-      const update = {
-        $set: {
-          "bookedDates.$.date": newDate,
-        },
-      };
+        const update = {
+          $set: {
+            "bookedDates.$.date": newDate,
+          },
+        };
 
-      const result = await roomsCollection.updateOne(filter, update);
+        const result = await roomsCollection.updateOne(filter, update);
 
-      res.send({
-        success: result.modifiedCount > 0,
-        message:
-          result.modifiedCount > 0
-            ? "Booking date updated successfully"
-            : "Booking not found or already updated",
-      });
-    });
+        res.send({
+          success: result.modifiedCount > 0,
+          message:
+            result.modifiedCount > 0
+              ? "Booking date updated successfully"
+              : "Booking not found or already updated",
+        });
+      }
+    );
 
     // Booking Room Cancel
 
-    app.delete("/booking-cancel", async (req, res) => {
-      const { bookingId, roomId } = req.body;
+    app.delete(
+      "/booking-cancel",
+      verifyFireBaseToken,
+      verifyTokenEmail,
+      async (req, res) => {
+        const { bookingId, roomId } = req.body;
 
-      const filter = {
-        _id: new ObjectId(roomId),
-      };
+        const filter = {
+          _id: new ObjectId(roomId),
+        };
 
-      const updateDoc = {
-        $pull: {
-          bookedDates: {
-            _id: new ObjectId(bookingId),
+        const updateDoc = {
+          $pull: {
+            bookedDates: {
+              _id: new ObjectId(bookingId),
+            },
           },
-        },
-        $set: { availability: true },
-      };
+          $set: { availability: true },
+        };
 
-      const result = await roomsCollection.updateOne(filter, updateDoc);
+        const result = await roomsCollection.updateOne(filter, updateDoc);
 
-      res.send({
-        success: result.modifiedCount > 0,
-        message:
-          result.modifiedCount > 0
-            ? "Booking cancelled successfully"
-            : "Booking not found or already cancelled",
-      });
-    });
+        res.send({
+          success: result.modifiedCount > 0,
+          message:
+            result.modifiedCount > 0
+              ? "Booking cancelled successfully"
+              : "Booking not found or already cancelled",
+        });
+      }
+    );
   } finally {
   }
 }
