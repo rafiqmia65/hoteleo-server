@@ -82,7 +82,7 @@ async function run() {
         filter.price = { $lte: 1000 };
       } else if (budget === "1001-1500") {
         filter.price = { $gt: 1000, $lte: 1500 };
-      } else if (budget === "1501+") {
+      } else {
         filter.price = { $gt: 1500 };
       }
 
