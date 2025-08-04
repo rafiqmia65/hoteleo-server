@@ -1,132 +1,142 @@
-Here's the complete `README.md` file code ready for you to copy and paste:
+# 🌐 Hoteleo Server
 
-```markdown
-# Hoteleo Server :hotel:
+![Node.js](https://img.shields.io/badge/Node.js-v18+-green) 
+![Express](https://img.shields.io/badge/Express-v5.x-lightgrey) 
+![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-brightgreen)
 
-![Node.js](https://img.shields.io/badge/Node.js-v18+-green) ![Express](https://img.shields.io/badge/Express-v5.x-lightgrey) ![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-brightgreen)
+Backend API for the **Hoteleo** hotel booking platform built with **Node.js**, **Express**, and **MongoDB**.  
+Implements **MVC architecture**, **JWT authentication**, and **RESTful endpoints** for a scalable backend.
 
-Backend API for the **Hoteleo** hotel booking platform with Node.js, Express, and MongoDB. Features MVC architecture, JWT authentication, and RESTful endpoints.
+---
 
-## 📦 Project Structure
-
+## 📂 Project Structure
 ```
-HOTELED-SERVER/
+HOTELEO-SERVER/
 ├── node_modules/
 ├── src/
 │   ├── config/
-│   │   ├── db.js            # MongoDB connection
-│   │   └── firebaseAdmin.js # Firebase setup
+│   │   ├── db.js                 # MongoDB connection
+│   │   └── firebaseAdmin.js      # Firebase setup
 │   ├── controllers/
-│   │   ├── roomController.js    # Room logic
-│   │   
+│   │   └── roomController.js     # Room logic
 │   ├── middleware/
-│   │   ├── verifyFireBaseToken.js          # Firebase token validation
-│   │   └── verifyTokenEmail  # Email validation
+│   │   ├── verifyFireBaseToken.js # Firebase token validation
+│   │   └── verifyTokenEmail.js    # Email validation
 │   ├── models/
-│   │   ├── Room.js          # Room schema
-│   │  
+│   │   └── Room.js               # Room schema
 │   ├── routes/
-│   │   ├── roomRoutes.js    # Room endpoints
-│   │
-│   ├── app.js               # Express setup
-│   └── index.js            # Server entry
-├── .env                    # Environment vars
+│   │   └── roomRoutes.js         # Room endpoints
+│   ├── app.js                    # Express app setup
+│   └── index.js                  # Server entry point
+├── .env                          # Environment variables
 ├── .gitignore
-├── firebase-admin-key.json # Firebase key
+├── firebase-admin-key.json       # Firebase credentials
 ├── package.json
-└── vercel.json            # Deployment config
+└── vercel.json                   # Deployment configuration
 ```
 
+---
+
 ## 🚀 Features
+- 🛠 **MVC Architecture**
+- 🔑 **JWT Authentication**
+- 🔥 **Firebase Integration**
+- 🧾 **Request Validation**
+- ⚠ **Error Handling**
+- 🧪 **Testing Ready Setup**
 
-- **MVC Architecture**
-- **JWT Authentication**
-- **Firebase Integration**
-- **Request Validation**
-- **Error Handling**
-- **Testing Setup**
+---
 
-## 🛠️ Setup
+## ⚡ Setup & Installation
 
-1. **Install dependencies**
+1️⃣ **Install dependencies**
 ```bash
 npm install
 ```
 
-2. **Environment setup**
+2️⃣ **Configure environment variables**
 ```bash
 cp .env.example .env
-# Edit .env with your credentials
+# Update values in .env with your credentials
 ```
 
-3. **Run the server**
+3️⃣ **Run the server**
 ```bash
-npm start      # Node
-npm run dev    # Nodemon
+npm start      # Production
+npm run dev    # Development (Nodemon)
 ```
 
-## 🌐 API Endpoints
+---
 
-### Rooms
-| Endpoint | Method | Description | 
-|----------|--------|-------------|
-| `/` | POST | Create room | 
-| `/rooms` | GET | Get all rooms |
-| `/rooms/:id` | GET | Get room details | 
-| `/top-rated-room` | GET | Most Review Room | 
+## 📡 API Endpoints
 
-### Bookings
-| Endpoint | Method | Description | 
-|----------|--------|-------------|
-| `//book-room/:id` | PATCH | Create booking | 
-| `/my-bookings` | GET | Get bookings Room | 
-| `/booking-date-update` | PATCH | Update bookings Date | 
-| `/booking-cancel` | DELETE | Cancel booking room | 
+### 🏨 Rooms
+| Endpoint            | Method | Description            |
+|---------------------|--------|------------------------|
+| `/`                 | POST   | Create a room          |
+| `/rooms`            | GET    | Get all rooms          |
+| `/rooms/:id`        | GET    | Get room details       |
+| `/top-rated-room`   | GET    | Get most reviewed room |
 
-### Reviews
-| Endpoint | Method | Description | 
-|----------|--------|-------------|
-| `/latest-reviews` | GET | Get reviews | 
-| `/review/:roomId` | PATCH | Add review | 
+### 📅 Bookings
+| Endpoint                | Method | Description               |
+|-------------------------|--------|---------------------------|
+| `/book-room/:id`        | PATCH  | Book a room               |
+| `/my-bookings`          | GET    | Get user bookings         |
+| `/booking-date-update`  | PATCH  | Update booking date       |
+| `/booking-cancel`       | DELETE | Cancel a booking          |
 
-## 🔒 Security
-- Environment variables for secrets
-- Input validation
-- Rate limiting (100 reqs/15min)
-- CORS restrictions
-- HTTPS enforcement
+### ⭐ Reviews
+| Endpoint             | Method | Description          |
+|----------------------|--------|----------------------|
+| `/latest-reviews`    | GET    | Get latest reviews   |
+| `/review/:roomId`    | PATCH  | Add review to a room |
 
-## 🚀 Deployment
+---
+
+## 🔒 Security Measures
+- 🔑 Environment variables for sensitive data
+- ✅ Input validation for all endpoints
+- ⏳ Rate limiting (**100 reqs/15min**)
+- 🌐 CORS restrictions
+- 🔐 HTTPS enforcement (in production)
+
+---
+
+## 🚢 Deployment (Vercel)
 1. Configure `vercel.json`
-2. Push to Git:
+2. Push to GitHub:
 ```bash
 git push origin main
 ```
+3. Deploy from Vercel dashboard
+
+---
 
 ## 🤝 Contributing
-1. Fork repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Open PR
+1. Fork this repository
+2. Create your feature branch  
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. Commit changes  
+   ```bash
+   git commit -m "Add YourFeature"
+   ```
+4. Push to branch  
+   ```bash
+   git push origin feature/YourFeature
+   ```
+5. Open a Pull Request
 
-## 📄 License
-MIT License
-```
+---
 
-### How to Use:
-1. Create new file `README.md`
-2. Copy all content above
-3. Paste into your file
-4. Save
+## 📜 License
+This project is licensed under the **MIT License**.
 
-The file includes:
-- Modern badges with updated versions
-- Detailed project structure
-- Complete setup instructions
-- Comprehensive API documentation
-- Security measures
-- Deployment guide
-- Contribution guidelines
+---
 
-You can customize any section as needed. The formatting is optimized for GitHub Markdown rendering.
+### 📝 How to Use:
+- Create a new file named `README.md`
+- Paste this content
+- Save the file — optimized for GitHub rendering
